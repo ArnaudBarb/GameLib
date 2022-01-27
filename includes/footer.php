@@ -1,5 +1,6 @@
 <footer>
-    <p>&copy; <?php date('Y'); ?> - GameLib</p>
+    <p>&copy; <?php echo date('Y'); ?> - GameLib</p>
+
 </footer>
 </body>
 </html>
