@@ -44,24 +44,32 @@ if (isset($_POST['frm'])) {
 
       try{
         $conn = new PDO("mysql:host=$serverName;dbname=$database", $userName, $userPassword);
+        echo "Connexion ok";
 // sert à faire une insertion multiple
-    $conn->begintransaction();
-//insertion dans un buffer en vue de l'insertion dans la base de données
-      $sql1 = "INSERT INTO utilisateurs(id_utilisateurs, nom, prenom, mail, mdp)
-      VALUES ('', 'DURAND', 'Michel', 'michel@durand.com', '1234')";
-            $conn->exec($sql1);
-      $sql2 = "INSERT INTO utilisateurs(id_utilisateurs, nom, prenom, mail, mdp)
-      VALUES ('', 'DUPOND', 'René', 'renedu27@gmail.com', 'bibiche')";
-            $conn->exec($sql2);
-//sert à insérer tous les éléments dans la bdd
-    $conn->commit();
+        $conn->begintransaction();
+        $password = password_hash($password, PASSWORD_DEFAULT);
+        //insertion dans un buffer en vue de l'insertion dans la base de données
+        $sql = "INSERT INTO utilisateurs(id_utilisateur, nom, prenom, mail, mdp)
+        VALUES (NULL, '$nom', '$prenom', '$email', '$password)";
+        $conn->exec($sql);
+        //sert à insérer tous les éléments dans la bdd
+        $conn->commit();
+        echo "<p>Insertions effectuées</p>";
+
+            // $sql1 = "INSERT INTO utilisateurs(id_utilisateur, nom, prenom, mail, mdp)
+            //          VALUES ('', 'DURAND', 'Michel', 'michel@durand.com', '1234')";
+            //   $conn->exec($sql1);
+            // $sql2 = "INSERT INTO utilisateurs(id_utilisateur, nom, prenom, mail, mdp)
+            //          VALUES ('', 'DUPOND', 'René', 'renedu27@gmail.com', 'bibiche')";
+            //   $conn->exec($sql2);
       }
-      
+
       catch(PDOException $e){
+        $conn->rollBack();
         die("Erreur : " . $e->getMessage());
       }
 //ferme le déroulement du script si tout est ok
-    $conn = null;
+        $conn = null;
     }
 //else= affichage du message d'erreur sous forme de liste dans le cas d'un champ vide
     else{
