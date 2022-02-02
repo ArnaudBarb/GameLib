@@ -46,6 +46,7 @@ if (isset($_POST['frm'])) {
         $conn = new PDO("mysql:host=$serverName;dbname=$database", $userName, $userPassword);
 // sert à faire une insertion multiple
         $conn->begintransaction();
+        //sert à hasher le mot de passe (comme sha1 mais pas exactement)
         $password = password_hash($password, PASSWORD_DEFAULT);
         //insertion dans un buffer en vue de l'insertion dans la base de données
         $sql = "INSERT INTO utilisateurs(id_utilisateur, nom, prenom, mail, mdp)
@@ -54,7 +55,7 @@ if (isset($_POST['frm'])) {
         //sert à insérer tous les éléments dans la bdd
         $conn->commit();
         echo "<p>Insertions effectuées</p>";
-
+        //insertions manuelles**
             // $sql1 = "INSERT INTO utilisateurs(id_utilisateur, nom, prenom, mail, mdp)
             //          VALUES ('', 'DURAND', 'Michel', 'michel@durand.com', '1234')";
             //   $conn->exec($sql1);
