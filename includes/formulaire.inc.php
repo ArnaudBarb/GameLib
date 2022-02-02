@@ -2,11 +2,12 @@
 //traitement pour le remplissage du fomulaire
 if (isset($_POST['frm'])) {
   //Appel des variables pour remplir le fomrulaire; trim pour enlever les espaces dans le formulaire
-  $nom = trim($_POST['nom']) ?? '';
-  $prenom = trim($_POST['prenom']) ?? '';
-  $email = trim($_POST['email']) ?? '';
-  $motDePasse = $_POST['motDePasse'] ?? '';
-  $confirmerMotDePasse = $_POST['confirmerMotDePasse'] ?? '';
+  //html entities sert à éviter les injections de code (attaques )
+  $nom = htmlentities(trim($_POST['nom'])) ?? '';
+  $prenom = htmlentities(trim($_POST['prenom'])) ?? '';
+  $email = htmlentities(trim($_POST['email'])) ?? '';
+  $motDePasse = htmlentities(trim($_POST['motDePasse'])) ?? '';
+  $confirmerMotDePasse = htmlentities(trim($_POST['confirmerMotDePasse'])) ?? '';
 
 //création d'un tableau vide afin de récupérer les données du formulaire, sert à traiter les occurences vides
   $erreur = array();
@@ -36,7 +37,33 @@ if (isset($_POST['frm'])) {
       array_push($erreur, "Confirmation inexacte, veuillez recommencer svp");
   
     if(count($erreur) === 0){
-      echo "traitement du formulaire";
+      $serverName = "localhost";
+      $userName = "root";
+      $database = "exercice";
+      $userPassword = "";
+
+      try{
+        $conn = new PDO("mysql:host=$serverName;dbname=$database", $userName, $userPassword);
+        echo "connexion ok";
+      }
+      catch(PDOException $e){
+        die("Erreur : " . $e->getMessage());
+      }
+
+// sert à faire une insertion multiple
+    $conn->begintransaction();
+//insertion dans un buffer en vue de l'insertion dans la base de données
+      $sql1 = "INSERT INTO utilisateurs(id_utilisateurs, nom, prenom, mail, mdp)
+      VALUES ('', 'DURAND', 'Michel', 'michel@durand.com', '1234')";
+            $conn->exec($sql1);
+      $sql2 = "INSERT INTO utilisateurs(id_utilisateurs, nom, prenom, mail, mdp)
+      VALUES ('', 'DUPOND', 'René', 'renedu27@gmail.com', 'bibiche')";
+            $conn->exec($sql2);
+//sert à insérer tous les éléments dans la bdd
+    $conn->commit();
+//ferme le déroulement du script si tout est ok
+    $conn = null;
+
     }
 //else= affichage du message d'erreur sous forme de liste dans le cas d'un champ vide
     else{
@@ -56,7 +83,7 @@ if (isset($_POST['frm'])) {
       $messageErreur .="</ul>";
       echo $messageErreur;
 
-      echo password_hash($motDePasse, PASSWORD_BCRYPT);
+      echo password_hash($motDePasse, PASSWORD_DEFAULT);
     }
 
 } else{
