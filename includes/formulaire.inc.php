@@ -6,7 +6,7 @@ if (isset($_POST['frm'])) {
   $nom = htmlentities(trim($_POST['nom'])) ?? '';
   $prenom = htmlentities(trim($_POST['prenom'])) ?? '';
   $email = htmlentities(trim($_POST['email'])) ?? '';
-  $motDePasse = htmlentities(trim($_POST['motDePasse'])) ?? '';
+  $password = htmlentities(trim($_POST['motDePasse'])) ?? '';
   $confirmerMotDePasse = htmlentities(trim($_POST['confirmerMotDePasse'])) ?? '';
 
 //création d'un tableau vide afin de récupérer les données du formulaire, sert à traiter les occurences vides
@@ -27,13 +27,13 @@ if (isset($_POST['frm'])) {
     if(!filter_var($email, FILTER_VALIDATE_EMAIL))
       array_push($erreur, "Veuillez saisir un e-mail valide");
 
-    if(strlen($motDePasse) === 0)
+    if(strlen($password) === 0)
       array_push($erreur, "Veuillez saisir un mot de passe");
 
     if(strlen($confirmerMotDePasse) === 0)
       array_push($erreur, "Veuillez confirmer votre mot de passe");
 
-    elseif($confirmerMotDePasse !== $motDePasse)
+    elseif($confirmerMotDePasse !== $password)
       array_push($erreur, "Confirmation inexacte, veuillez recommencer svp");
   
     if(count($erreur) === 0){
@@ -44,13 +44,12 @@ if (isset($_POST['frm'])) {
 
       try{
         $conn = new PDO("mysql:host=$serverName;dbname=$database", $userName, $userPassword);
-        echo "Connexion ok";
 // sert à faire une insertion multiple
         $conn->begintransaction();
         $password = password_hash($password, PASSWORD_DEFAULT);
         //insertion dans un buffer en vue de l'insertion dans la base de données
         $sql = "INSERT INTO utilisateurs(id_utilisateur, nom, prenom, mail, mdp)
-        VALUES (NULL, '$nom', '$prenom', '$email', '$password)";
+        VALUES (NULL, '$nom', '$prenom', '$email', '$password')";
         $conn->exec($sql);
         //sert à insérer tous les éléments dans la bdd
         $conn->commit();
@@ -89,7 +88,7 @@ if (isset($_POST['frm'])) {
       $messageErreur .="</ul>";
       echo $messageErreur;
 
-      echo password_hash($motDePasse, PASSWORD_DEFAULT);
+      echo password_hash($password, PASSWORD_DEFAULT);
     }
 
 } else{
